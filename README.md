@@ -79,3 +79,10 @@ License
 Goutte is licensed under the MIT license.
 
 [1]: http://github.com/fabpot/goutte/blob/master/goutte.phar
+
+
+A part of this package (Diggin_Http_Response_Charset_Detector_Html &
+                        Diggin_Scraper_Adapter_Htmlscraping) is
+borrowed from HTMLScraping (LGPL)
+http://www.rcdtokyo.com/etc/htmlscraping/
+
