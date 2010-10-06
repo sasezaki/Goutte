@@ -1,15 +1,11 @@
 <?php
+namespace Rhizome;
 
-require 'goutte.phar';
-
-use Goutte\Client as Goutte;
 use Zend\Http\Response as ZendResponse;
 use Symfony\Component\BrowserKit\Response;
+use Rhizome\DomCrawler\Crawler;
 
-set_include_path('src/vendor/diggin/library/'. PATH_SEPARATOR. 'src/vendor/zf2/library/');
-require_once 'Diggin/Scraper/Adapter/Htmlscraping.php';
-
-class Rhizome extends Goutte
+class Client extends \Goutte\Client
 {
     protected $_scraperAdapter;
 
@@ -21,7 +17,8 @@ class Rhizome extends Goutte
     public function getScraperAdapter()
     {
         if (!$this->_scraperAdapter) {
-            $adapter = new Diggin_Scraper_Adapter_Htmlscraping();
+            require_once 'Diggin/Scraper/Adapter/Htmlscraping.php';
+            $adapter = new \Diggin_Scraper_Adapter_Htmlscraping();
             $adapter->setConfig(array('pre_ampersand_escape' => false,
                                       'url' => $this->getRequest()->getUri()));
             $this->_scraperAdapter = $adapter;
@@ -38,23 +35,13 @@ class Rhizome extends Goutte
         return $this->request('GET', $uri, $parameters, $files, $server, $changeHistory);
     }
 
-    public function __call($method, $args)
-    {}
+    //@override
+    protected function createCrawlerFromContent($uri, $content, $type)
+    {  
+        $crawler = new Crawler(null, $uri);
+        $crawler->addContent($content, $type);
+
+        return $crawler;
+    }
+
 }
-
-
-try {
-    $client = new Rhizome;
-    // Acces Google
-    $clawler = $client->request('GET', 'http://www.google.com/');
-
-    var_dump( $clawler->filter('title')->text());
-
-    // $crawler looks like mechanize's page
-    var_dump( $client->get('http://www.yahoo.co.jp/')->filter('title')->text());
-
-
-} catch (\Exception $e) {
-    print_t($e);
-}
-
