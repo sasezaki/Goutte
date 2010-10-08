@@ -5,13 +5,16 @@ use Zend\Http\Response as ZendResponse;
 use Symfony\Component\BrowserKit\Response;
 use Rhizome\DomCrawler\Crawler;
 
+use \Diggin_Http_Response_Charset as Charset;
+
 class Client extends \Goutte\Client
 {
     protected $_scraperAdapter;
 
     protected function createResponse(ZendResponse $response)
     {
-        return new Response($this->getScraperAdapter()->getXhtml($response), $response->getStatus(), $response->getHeaders());
+        $headers = Charset::clearHeadersCharset($response->getHeaders());
+        return new Response($this->getScraperAdapter()->getXhtml($response), $response->getStatus(), $headers);
     }
 
     public function getScraperAdapter()
@@ -19,10 +22,11 @@ class Client extends \Goutte\Client
         if (!$this->_scraperAdapter) {
             require_once 'Diggin/Scraper/Adapter/Htmlscraping.php';
             $adapter = new \Diggin_Scraper_Adapter_Htmlscraping();
-            $adapter->setConfig(array('pre_ampersand_escape' => false,
-                                      'url' => $this->getRequest()->getUri()));
+            $adapter->setConfig(array('pre_ampersand_escape' => false));
             $this->_scraperAdapter = $adapter;
         }
+
+        $this->_scraperAdapter->setConfig(array('url' => $this->getRequest()->getUri()));
 
         return $this->_scraperAdapter;
     }

@@ -27,4 +27,9 @@ class Crawler extends SymfonyCrawler
         return $links;
     }
 
+    //debug
+    //public function getNode($pos)
+    //{
+    //    return parent::getNode($pos);   
+    //}
 }

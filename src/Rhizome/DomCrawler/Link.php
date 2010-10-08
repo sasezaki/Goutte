@@ -17,10 +17,11 @@ class Link extends \Symfony\Component\DomCrawler\Link
             $headbase = new \Diggin_Scraper_Helper_Simplexml_HeadBaseHref($simplexml, array('preAmpFilter' => false,
                                                                                             /**'baseUrl' => */));
             $baseUrl = $headbase->getBaseUrl();
+
             if ($baseUrl) {
                 $uriHander = $this->_getUriHandler();
                 $uriHander->setBaseUri($baseUrl);
-                return $uriHander->getAbsoluteUrl($this->host.$this->path);
+                return $uriHander->getAbsoluteUrl($this->node->getAttribute('href'));
             }
         }
 
